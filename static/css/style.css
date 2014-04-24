@@ -1,0 +1,14 @@
+html,body{padding:0;width:100%;background:#f1f1f1 !important;}
+html header,body header{background:#009e92;display:inline-block;vertical-align:top;width:100%;overflow:hidden;border-bottom:2px solid #dd4029;}
+html header .titulo,body header .titulo{display:inline-block;vertical-align:top;width:100%;font-weight:bold;font-size:18px;}
+html header .titulo .tituloTexto,body header .titulo .tituloTexto{color:#fff;display:inline-block;vertical-align:top;float:left;margin:20px}
+html header .titulo .btnEntrar,body header .titulo .btnEntrar{cursor:pointer;color:#fff;font-weight:bold;margin:14px;margin-right:25px;border:none;display:inline-block;vertical-align:top;float:right;background:#f9884d;width:11em;height:3em;border-radius:6px;box-shadow:3px 3px 0 #dd4029}
+html article,body article{display:inline-block;vertical-align:top;width:60%;margin:5px;overflow:hidden;}
+html article .contenido,body article .contenido{margin:7px 0 0 13px;border-radius:3px;padding:10px;display:block;position:relative;width:100%;background:#fff;height:300px;}
+html article .contenido .tituloPregunta,body article .contenido .tituloPregunta{color:#333;font-size:2em;margin:3px 3px 15px 3px}
+html article .contenido form,body article .contenido form{margin:3px 0 2px 20px;}
+html article .contenido form .opciones,body article .contenido form .opciones{margin:3px 2px 10px 2px;display:block;position:relative;width:100%}
+html article .contenido form .botones,body article .contenido form .botones{position:absolute;bottom:8px;right:10px;display:block;margin:20px 13px 20px 0;}
+html article .contenido form .botones button,body article .contenido form .botones button{color:#fff;width:8em;height:2em;border:none;background:#f9884d;box-shadow:3px 3px 0 #dd4029;border-radius:2px;font-weight:bold}
+html aside,body aside{display:inline-block;vertical-align:top;background:#fff;width:35%;margin:12px;}
+html aside .ranking,body aside .ranking{display:block;padding:7px;border-radius:5px}
