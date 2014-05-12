@@ -1,0 +1,16 @@
+
+<div class="container">
+
+      <form class="form-signin" role="form" name="form">
+        <h2 class="form-signin-heading">Registrarse</h2>
+        <input type="number" class="form-control" name="codigo" placeholder="Codigo Estudiantil" required autofocus ng-model="user.codigo">
+        <br>
+        <input type="text" class="form-control" name="usuario" placeholder="Usuario" required ng-model="user.user">
+        <br>
+        <p class="text-danger">{{ msg }}</p>
+        
+        <br>
+        <button class="btn btn-lg btn-primary btn-block" ng-click="crearUsuario()">Entrar</button>
+      </form>
+
+</div>

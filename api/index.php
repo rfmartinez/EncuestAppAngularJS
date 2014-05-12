@@ -2,54 +2,16 @@
 
 require 'vendor/autoload.php';
 
-use Mailgun\Mailgun;
-
-
-
-/*# Instantiate the client.
-$mgClient = new Mailgun('key-3ax6xnjp29jd6fds4gc373sgvjxteol0');
-$domain = "samples.mailgun.org";
-
-# Make the call to the client.
-$result = $mgClient->sendMessage("$domain",
-                  array('from'    => 'Excited User <me@samples.mailgun.org>',
-                        'to'      => 'Baz <baz@example.com>',
-                        'subject' => 'Hello',
-                        'text'    => 'Testing some Mailgun awesomness!'));
-
-*/
-
-						
-
-function generarCodigo($longitud) {
-			 $key = '';
-			 $pattern = '1234567890abcdefghijklmnopqrstuvwxyz';
-			 $max = strlen($pattern)-1;
-			 for($i=0;$i < $longitud;$i++) $key .= $pattern{mt_rand(0,$max)};
-			 return $key;
-			}
-			 
-/* 
- * parte de facebook para mostrar los datos
- *  
- require_once("libfb/confb.php");
- $config = array(
-      'appId' => '600024680063899',
-      'secret' => '7ba9ae72ed3137d9e91f714deb7dc6ab',
-      'fileUpload' => false, // optional
-      'allowSignedRequest' => false, // optional, but should be set to false for non-canvas apps
-  );
-
-  $facebook = new Facebook($config);
-  $facebook_id = $facebook->getUser();
-  
- */
 require "NotORM.php";
+
+desarrollo
  $servidor= "172.0.0.1";
 $user="root";
 $pass="";
  
 $pdo = new PDO("mysql:dbname=encuesta;host=127.0.0.1", $user, $pass);
+
+
 $db = new NotORM($pdo);
 
 
@@ -70,28 +32,163 @@ $app->get('/', function (){
 
 });
 
+$app->post('/usuario/', function () use($app, $db){
+    
+    //$app->response->headers->set('Content-Type', 'application/json');
+    // con getBody recojemos el json que enviamos desde angular, y lo convertimos a array para que se inserte a la base de datos
+    $ujson = $app->request()->getBody();
+
+    $u = (array) json_decode($app->request()->getBody());
+
+    
+    
+    
+    if ($r = $db->usuario()->where("user", $u['user'] )->fetch()){
+                
+                echo json_encode(array(
+                        "error" => 'ya existe un usuario con ese usuario',
+                                               
+                    ));
+                
+            } elseif($r = $db->usuario()->where("codigo", $u['codigo'] )->fetch()) {
+                
+                echo json_encode(array(
+                        "error" => 'ya existe un usuario con ese codigo',
+                                               
+                    ));
+                
+            }else{
+
+
+                $result = $db->usuario->insert($u);
+
+                echo json_encode(array("id" => $result["id"]));
+                
+            }
+            
+
+    
+
+});
+
+
+
 //devuelve la lista de preguntas....
 $app->get('/pregunta/', function () use($app, $db){
-	$data = array();
-    foreach ($db->pregunta() as $e) {
-        $data[]  = array(
-            "id" => $e["id"],
-            "pregunta" => $e["pregunta"]
-            
-        );
-    }
+	
 	$app->response->headers->set('Content-Type', 'application/json');
-	echo json_encode($data);
+	
+	$data = array();
+	$allPreguntas = array();
+	$preguntas = $db->pregunta();
+	$pArray = array();
+	
+	
+	// para convertir las preguntas de objeto NotOrm a array normal.
+    foreach ($preguntas as $p) {
+			$allPreguntas[]= array(
+			"id" => $p["id"],
+            "pregunta" => $p["pregunta"]);
+		
+	}
+	
+	
+	
+	
+	//obtengo la cantidad de preguntas que quiero mostrar, array_rand devuelve un array con los indices seleccionados 
+	//aleatoriamente	
+	$rand_keys = array_rand($allPreguntas, 3);
+	//print_r($rand_keys);
+		
+	//for principal para recorrer las preguntas convertidas en array normal	
+	for ($i=0; $i < count($allPreguntas); $i++) {
+		//foreach para obtener el valor del indice que devuelve array_rand
+		foreach ($rand_keys as $key => $value) {
+			//si el $i (index) del array principal es igual al $value de foreach, entonces
+			//lo que quiere decir que es una pregunta de las que se seleccionaron aleatoriamente
+			if ($i == $value) {
+			//obtengo el array de la pregunta actual del ciclo	
+			 $pindex =	$allPreguntas[$value];
+			 //array para guardar las opciones de las preguntas
+			 $op = array();
+			 //recorrro la respuesta de la consulta de las opciones cuyo id sea igual al de la pregunta actual ($pindex['id'])
+				foreach ($db->opcion()->where('pregunta_id', $pindex['id']) as $o){
+					//por cada opcion lo convierto en un array y lo guardo en $op
+		            $op[] = array('id' => $o["id"] ,
+		                        'opcion' => $o["opcion"],
+		                        'pregunta_id' => $o['pregunta_id']); 
+		
+		         }
+	        // $data inserto las preguntas con sus respectivas opciones
+		        $data[]  = array(
+	            "id" => $pindex["id"],
+	            "pregunta" => $pindex["pregunta"],
+	            "opciones" => $op,
+	
+	            
+	        	);
+			 
+			}
+		} 
+		
+	}
+    
+    //si hay algo en $data entonces imprimimos data como json    
+    if ($data) {
+        # code...
+    	
+    	echo json_encode($data);
+    }else{
+		echo json_encode(array(
+            "error" => "revise la base de datos si contiene preguntas!",
+            
+            ));
+		
+        
+    }
+    
+	
 		
     
 });
 
+
+
 $app->post('/pregunta/', function () use($app, $db){
 	
 	$app->response->headers->set('Content-Type', 'application/json');
-	$pregunta = $app->request()->post();
-	$result = $db->pregunta->insert($pregunta);
+    // con getBody recojemos el json que enviamos desde angular, y lo convertimos a array para que se inserte a la base de datos
+	$pregunta = (array) json_decode($app->request()->getBody());
+
+    $result = $db->pregunta->insert($pregunta);
+
 	echo json_encode(array("id" => $result["id"]));
+
+});
+
+$app->get('/pregunta/:id/opciones/', function ($id) use($app, $db){
+    
+    $app->response->headers->set('Content-Type', 'application/json');
+    $pregunta = $db->opcion()->where("pregunta_id", $id);
+    foreach ($db->opcion()->where("pregunta_id", $id) as $e) {
+
+        $data[]  = array(
+            "id" => $e["id"],
+            "opcion" => $e["opcion"],
+            "respuesta" => $e["respuesta"],
+            "pregunta_id" => $e["pregunta_id"]
+            
+        );
+    }
+    if (count($data) != -1) {
+        echo json_encode($data);
+    }
+    else{
+        echo json_encode(array(
+            "status" => false,
+            "message" => "encuesta ID $id does not exist"
+            ));
+    }
 
 });
 
@@ -113,26 +210,29 @@ $app->get("/pregunta/:id", function ($id) use ($app, $db) {
     }
 });
 
-
+/*
 $app->put("/pregunta/:id", function ($id) use ($app, $db) {
-    $app->response()->header("Content-Type", "application/json");
-    $pregunta = $db->pregunta()->where("id", $id);
+    $pregunta = $db->pregunta()->where('id', $id);
+    $data = null;
+ 
     if ($pregunta->fetch()) {
-        $post = $app->request()->put();
-        $result = $pregunta->update($post);
+        
+        $p = (array) json_decode($app->request()->getBody());
+ 
+        
+        $result = $pregunta->update($p);
         echo json_encode(array(
             "status" => (bool)$result,
             "message" => "Pregunta updated successfully"
             ));
-    }
-    else{
+    }else{
         echo json_encode(array(
             "status" => false,
             "message" => "Pregunta id $id does not exist"
         ));
     }
 });
-
+*/
 // rutas opciones
 $app->get('/opcion/', function () use($app, $db){
 	$data = array();	
@@ -153,7 +253,7 @@ $app->get('/opcion/', function () use($app, $db){
 $app->post('/opcion/', function () use($app, $db){
 	
 	$app->response->headers->set('Content-Type', 'application/json');
-	$opcion = $app->request()->post();
+    $opcion = (array) json_decode($app->request()->getBody());
 	$result = $db->opcion->insert($opcion);
 	echo json_encode(array("id" => $result["id"]));
 
@@ -206,7 +306,7 @@ $app->get('/usuario/', function () use($app, $db){
         $data[]  = array(
             "id" => $e["id"],
             "user" => $e["user"],
-            "email" => $e["email"]
+            "codigo" => $e["codigo"]
             
         );
     }
@@ -232,7 +332,7 @@ $app->get("/usuario/:id", function ($id) use ($app, $db) {
         echo json_encode(array(
             "id" => $data["id"],
             "user" => $data["user"],
-            "email" => $data["email"]
+            
             
             ));
     }
@@ -243,6 +343,34 @@ $app->get("/usuario/:id", function ($id) use ($app, $db) {
             ));
     }
 });
+
+$app->post('/login/', function () use($app, $db){
+    
+   $app->response->headers->set('Content-Type', 'application/json');
+    $usuario = (array) json_decode($app->request()->getBody());
+    if ($usuario['user'] and $usuario['codigo']) {
+
+        $user = $db->usuario()->where("user", $usuario['user'] )->where("codigo", $usuario['codigo']);
+        if ($data = $user->fetch()) {
+
+            echo json_encode(array("id" => $data["id"], 
+                                    "user" => $data["user"],
+                                    "codigo"=> $data["codigo"],
+                                    "permiso"=> $data["permiso"]));
+        }else{
+
+            echo json_encode(array(
+            "status" => false,
+            "message" => "Usuario no existe"
+            ));
+
+        }
+        
+
+    }
+
+});
+
 
 /*
 $app->put("/opcion/:id", function ($id) use ($app, $db) {
@@ -266,17 +394,35 @@ $app->put("/opcion/:id", function ($id) use ($app, $db) {
 
 */
 
-$app->post('/respuesta/', function () use($app, $db){
+$app->post('/respuesta/usuario/:id', function ($id) use($app, $db){
 	
 	$app->response->headers->set('Content-Type', 'application/json');
-	$respuesta = $app->request()->post();
-	$result = $db->respuesta->insert($respuesta);
-	echo json_encode(array("id" => $result["id"]));
+	$respuesta = json_decode($app->request()->getBody());
+    $validaUser =  $db->respuesta()->where("usuario_id", $id);
+    
+        if (!$validaUser->fetch()) {
+
+            foreach ($respuesta as $res) {
+                $respuestaArray = array('usuario_id' => $res->usuario_id , 'opcion_id' => $res->opcion_id, 'pregunta_id' => $res->pregunta_id);
+                $result = $db->respuesta->insert($respuestaArray);
+            
+                };
+        
+                echo json_encode(array(
+                    "status" => "successfully"
+                    ,"cod" => 2));
+        } else {
+                echo json_encode(array("status" => "Usted ya ha enviado sus respuestas, No se puede volver a enviar!", "cod" => 1));
+                
+        };
+        
+    //$result = $db->respuesta->insert($respuesta);
 
 });
 
 $app->get("/respuesta/:id", function ($id) use ($app, $db) {
     $app->response()->header("Content-Type", "application/json");
+
     $respuesta = $db->respuesta()->where("id", $id);
     if ($data = $respuesta->fetch()) {
         echo json_encode(array(
@@ -296,13 +442,83 @@ $app->get("/respuesta/:id", function ($id) use ($app, $db) {
 });
 
 // resultado
-$app->post('/resultado/', function () use($app, $db){
+$app->post('/resultado/usuario/:id', function ($id) use($app, $db){
 	
-	$app->response->headers->set('Content-Type', 'application/json');
-	$resultado = $app->request()->post();
-	$result = $db->resultado->insert($resultado);
-	echo json_encode(array("id" => $result["id"]));
+	//$app->response->headers->set('Content-Type', 'application/json');
+	$tiempo = $app->request()->getBody();
+    $respuestas = $db->respuesta()->where('usuario_id', $id);
+    $correctas = 0;
+    $promedio = 0;
+    //print_r($respuestas);
+    $numRespuestas = 0;
 
+    
+    if ($respuestas->fetch()) {
+         foreach ($respuestas as $respuesta) {
+            $numRespuestas++;
+            $opcion_id = $respuesta['opcion_id'];
+            $opcion = $db->opcion[$opcion_id];
+            if ($opcion['respuesta']==1) {
+                $correctas++;
+            }
+
+           echo " id ".$opcion['id']." Opcion ".$opcion['opcion']." Correcta ".$opcion['respuesta']. "\n";
+            //echo "por lo menos entra, ";
+
+        }
+
+        $promedio = $correctas/$numRespuestas;
+
+        //echo "promedio ".$promedio;
+        
+        $resul = $db->resultado->insert(array(
+            'promedio' => $promedio,
+             'tiempo' => $tiempo,
+             'usuario_id' => $id));
+
+        echo json_encode(array(
+            'id' => $resul['id'],
+            'promedio' => $resul['promedio'],
+             'tiempo' => $resul['tiempo'],
+             'usuario_id' => $resul['usuario_id'])
+            );
+
+   
+     } else {
+
+         echo json_encode(array(
+            "status" => false,
+            "message" => "Usuario ID $id does not exist"
+            ));
+     }
+    
+});
+
+
+$app->get("/resultado/", function () use ($app, $db) {
+
+    $data = array();
+    foreach ($db->resultado() as $r) {
+       
+       $user = $db->usuario[$r["usuario_id"]];
+        
+        $data[]  = array(
+            "id" => $r["id"],
+            "tiempo" => floatval($r["tiempo"]),
+            "promedio" => floatval($r["promedio"]),
+            "usuario_id" => $r["usuario_id"],
+            "usuario" => $user['user']           
+        );
+    }
+        
+    if ($data) {
+        # code...
+        $app->response->headers->set('Content-Type', 'application/json');
+        echo json_encode($data);
+    }else{
+
+        
+    }
 });
 
 $app->get("/resultado/:id_usuario", function ($usuario_id) use ($app, $db) {
@@ -311,8 +527,7 @@ $app->get("/resultado/:id_usuario", function ($usuario_id) use ($app, $db) {
     if ($data = $resultado->fetch()) {
         echo json_encode(array(
             "id" => $data["id"],
-            "inicio" => $data["inicio"],
-            "fin" => $data["fin"],
+            "tiempo" => $data["tiempo"],            
             "promedio" => $data["promedio"],
             "usuario_id" => $data["usuario_id"]
             
@@ -321,10 +536,11 @@ $app->get("/resultado/:id_usuario", function ($usuario_id) use ($app, $db) {
     else{
         echo json_encode(array(
             "status" => false,
-            "message" => "Respuesta con Usuario ID $id does not exist"
+            "message" => "Respuesta con Usuario ID $usuario_id does not exist"
             ));
     }
 });
+
 
 
 $app->run();

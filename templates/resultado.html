@@ -1,0 +1,58 @@
+<article>
+				<div class="contenido">
+					<div class="c" ng-show="resultado">
+						
+						
+						
+						<br>
+						<h2> Tu Resultado </h2>
+						<br>
+						Tiempo: <strong> {{ resultado.tiempo }} Segundos</strong>
+						<br>
+						Promedio: <strong>
+							{{ resultado.promedio }}
+						</strong>
+						 
+					</div>
+					<span ng-show="msg" >
+						{{ msg }}
+					</span>
+
+				</div>
+				
+				
+			</article>
+			<aside>
+				<div class="ranking">
+					<h3> Ranking </h3>
+					<table class="table table-hover">
+						<thead>
+							
+									<tr>
+										<td>Usuario</td>
+										<td>Resultado</td>
+										<td>Tiempo</td>
+									</tr>
+									
+								
+							</thead>
+							<!-- en cuanto encuetre la forma de colocar el background de color diferente para el usuario conectado, hasta este momento cambia el background pero se estan imprimiendo doble y por eso oculto los que no necesito -->
+								<tbody>
+									<tr ng-repeat="user in ranking | orderBy:['-promedio','tiempo']" >
+
+										<td ng-show="user.usuario_id == usuario.id" style="background:#cecece;">{{ user.usuario }}</td>
+										<td ng-show="user.usuario_id == usuario.id" style="background:#cecece;"> {{ user.promedio  }} </td>
+										<td ng-show="user.usuario_id == usuario.id" style="background:#cecece;"> {{ user.tiempo |number:3 }}s </td>
+										<td ng-hide="user.usuario_id == usuario.id">{{ user.usuario }}</td>
+										<td ng-hide="user.usuario_id == usuario.id"> {{ user.promedio }} </td>
+										<td ng-hide="user.usuario_id == usuario.id"> {{ user.tiempo |number:3}}s </td>
+
+
+									</tr>
+									
+								</tbody>
+							
+						
+					</table>
+				</div>
+			</aside>

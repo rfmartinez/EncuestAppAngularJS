@@ -1,0 +1,29 @@
+<article style="width:95% !important">
+				<div class="contenido" style="width:100% !important;margin-button:40px">
+					
+					<form name="form" style="max-width: 630px; margin:0 auto;">
+						<h2> Agregar pregunta </h2>
+
+					  <div class="form-group" >
+					    <h4>Pregunta</h4>
+					    <input type="text" class="form-control" name="pregunta" placeholder="Escribe la Pregunta" ng-model="formData.pregunta" required>
+					  </div>
+					<div class="form-group" style="max-width: 630px;">
+					<div>
+						<h4>Opciones</h4>
+							<ul>
+						        <li ng-repeat="opcion in opciones" style="text-decoration:none; list-style:none;margin:4px 0;">
+						          <input ng-model="opcion.texto" class=""  style="border-radius: 3px;border:1px solid #ccc;" required>
+						          <input ng-model="opcion.isrespuesta" type="radio" name="respuesta" value="1" ng-change="OnChangeVal($index)"> es respuesta?
+						          <button type="button" class="btn btn-sm" ng-click="removeOpcion($index)"><i class="icon-minus-sign"></i> Borrar </button>
+						        </li>
+						        <button type="button" class="btn btn-mini" ng-click="addOpcion()"><i class="icon-plus-sign"></i> Agregar </button>
+					      </ul>
+      				</div>
+					  </div>
+					  
+					  <button class="btn btn-primary btn-lg" ng-click="createPregunta()" ng-disabled="form.$invalid">Añadir</button>
+					</form>
+				</div>
+</article>
+			

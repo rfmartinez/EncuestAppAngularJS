@@ -1,0 +1,13 @@
+{
+  "name": "EncuestAppAngular",
+  "description": "Una aplicacion de encuesta con angular",
+  "version": "0.0.1",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "angular": "1.2.x",
+    "angular-mocks": "~1.2.x",
+    "bootstrap": "~3.1.1",
+    "angular-route": "~1.2.x"
+  }
+}

@@ -1,67 +1,53 @@
-<html lang="ES">
-	<head>
+<!DOCTYPE html>
 
+<html lang="ES" ng-app="EncuestaApp">
+	<head>
 		<title> Encuesta </title>
+		<meta charset="utf-8">
+		 <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    	<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="stylesheet" href="static/css/style.css">
+		<link rel="stylesheet" href="static/css/login.css">
 		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+		
+  		
 	</head>
-	<body>
-		<header>
+	<body >
+		<div ng-controller="appCtrl">
+		<header role="navigation">
+
 			<div class="titulo">
-				<h2 class="tituloTexto"> EncuestApp </h2>
-				<input type="button" value="Entrar" class="btnEntrar">
+				<h2 class="tituloTexto" ng-show="!usuarioConectado.user"> EncuestApp </h2>
+				<h2 class="tituloTexto" ng-show="usuarioConectado.user">{{ usuarioConectado.user }}</h2>
+					<div class="etc">
+						<a href="#/login" class="btn btnEntrar" ng-show="!usuarioConectado.user">Acceder</a>
+						<a href="#/singup" class="btn btnEntrar" ng-show="!usuarioConectado.user">Registrar</a>
+						
+					</div>
+					<a href="#/" class="btn btnEntrar" ng-hide="!usuarioConectado.user" ng-click="salir()">Salir</a>
+					<a class="menu-m" href="#" id="menu-b" ng-hide="usuarioConectado.user"></a>
+				
 			</div>
+			  
 
 		</header>
 		
+		<section ng-view>	
 			
-			<article>
-				<div class="contenido">
-					<h2 class="tituloPregunta"> Como se llama el fundador de la universidad del sinu? </h2>
-					<form action="" class="form">
-						<div class="opciones">
-							<input type="radio" name="sex" value="male">Opcion 1<br>
-							<input type="radio" name="sex" value="female">Opcion 2 <br>
-							<input type="radio" name="sex" value="male">Opcion 3<br>
-							<input type="radio" name="sex" value="female">Opcion 4 <br>	
-							
-						</div>
-						
-						<br>
-						<div class="botones">
-							<button type="submit"> Guardar </button>
-						</div>
-					</form>
-				</div>
-			</article>
-			<aside>
-				<div class="ranking">
-					<h3> Ranking </h3>
-					<table class="table table-hover">
-						<thead>
-							<tr>
-								<tbody>
-									<tr>
-										<td>User</td>
-										<td>Acumulado</td>
-									</tr>
-									
-								</tbody>
-							</tr>
-							</thead>
-							
-								<tbody>
-									<tr>
-										<td>Rafael</td>
-										<td> 45 </td>
-									</tr>
-									
-								</tbody>
-							
-						
-					</table>
-				</div>
-			</aside>
+		</section>	
 		
+		
+  		</div>
+  		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+		<!--<script src="bower_components/angular/angular.js"></script>-->
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js" type="text/javascript" charset="utf-8"></script>
+  		<script src="bower_components/angular-route/angular-route.js"></script>
+  		<script src="bower_components/angular-resource/angular-resource.js"></script>
+  		<script src="bower_components/angular-cookies/angular-cookies.min.js"></script>
+  		<script src="static/js/app.js"></script>
+  		<script src="static/js/controllers.js"></script>
+  		<script src="static/js/services.js"></script>
+  		<!-- Latest compiled and minified JavaScript -->
+
 	</body>
 </html>

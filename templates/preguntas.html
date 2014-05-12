@@ -1,0 +1,81 @@
+<article>
+				<div class="contenido" ng-show="msg">
+					<div class="c">
+						
+						<img src="static/img/e9_100.gif" alt="Emoticon" width='120px'>
+						
+						<br>
+						<h2> {{ msg }} </h2>
+						<br>
+						 
+					</div>
+
+				</div>
+				<div class="contenido" ng-hide="preguntaActual || msg">
+					<div class="c">
+						
+						<h2> Comienza la encuesta! Suerte.</h2>
+						<br>
+						<br>
+						<br>
+						<br>
+						 <button ng-click="comenzar()" class="btn btn-success btn-lg"> Comenzar </button>
+					</div>
+
+				</div>
+
+				<div class="contenido" ng-show="preguntaActual">
+					<h2 class="tituloPregunta"> {{ preguntaActual.pregunta }} </h2>
+
+					<form action="" class="form" ng-submit="seguir()">
+							<input type="hidden" ng-model="d.p" value="p" >
+						<div class="opciones" >
+							<div class="opcion" ng-repeat="op in preguntaActual.opciones">						
+								<input type="radio" name="{{preguntaActual.id}}" value="{{op}}" ng-model="opcionSelected.opcion" ng-change="OnChangeRadio($index)">{{ op.opcion }}<br>
+							</div>
+							
+						</div>
+						
+						<br>
+						<div class="botones">
+							
+							<button type="submit" ng-hide="preguntas[0].id==preguntaActual.id"> Seguir </button>
+							<button type="submit" ng-show="preguntas[0].id==preguntaActual.id"> Finalizar </button>
+						</div>
+					</form>
+				</div>
+			</article>
+			<aside>
+				<div class="ranking">
+					<h3> Ranking </h3>
+					<table class="table table-hover">
+						<thead>
+							
+									<tr>
+										<td>Usuario</td>
+										<td>Resultado</td>
+										<td>Tiempo</td>
+									</tr>
+									
+								
+							</thead>
+							<!-- en cuanto encuetre la forma de colocar el background de color diferente para el usuario conectado, hasta este momento cambia el background pero se estan imprimiendo doble y por eso oculto los que no necesito -->
+								<tbody>
+									<tr ng-repeat="user in ranking | orderBy:['-promedio','tiempo']" >
+
+										<td ng-show="user.usuario_id == usuario.id" style="background:#cecece;">{{ user.usuario }}</td>
+										<td ng-show="user.usuario_id == usuario.id" style="background:#cecece;"> {{ user.promedio }} </td>
+										<td ng-show="user.usuario_id == usuario.id" style="background:#cecece;"> {{ user.tiempo }} </td>
+										<td ng-hide="user.usuario_id == usuario.id">{{ user.usuario }}</td>
+										<td ng-hide="user.usuario_id == usuario.id"> {{ user.promedio }} </td>
+										<td ng-hide="user.usuario_id == usuario.id"> {{ user.tiempo }} </td>
+
+
+									</tr>
+									
+								</tbody>
+						
+						
+					</table>
+				</div>
+			</aside>

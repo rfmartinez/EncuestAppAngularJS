@@ -1,0 +1,18 @@
+<article style="width:95% !important">
+				<div class="contenido" style="width:100% !important; height:400px">
+					<h1>{{ pregunta.pregunta }}</h1>
+					<h2> Agregar Opciones </h2>
+					<form>
+					  <div class="form-group">
+					    <label for="pregunta">Opcion</label>
+					    <input type="text" class="form-control" name="opcion" placeholder="Escribe la Pregunta" ng-model="formData.opcion">
+					  </div>
+					  <div>
+					    
+					      <input type="radio" name="respuesta" > Es la respuesta?
+					    
+					  </div>
+					  <button class="btn btn-primary btn-lg" ng-click="createOpcion()">Añadir</button>
+					</form>
+				</div>
+</article>

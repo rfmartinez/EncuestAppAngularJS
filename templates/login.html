@@ -1,0 +1,12 @@
+<div class="container">
+
+      <form class="form-signin" ng-submit="iniciarSesion()">
+        <h2 class="form-signin-heading">Entrar</h2>
+        <input type="number" class="form-control" ng-model="user.codigo" placeholder="Codigo" required autofocus>
+        <input type="text" class="form-control" placeholder="Usuario" ng-model="user.user" required>
+        <br>
+        <span>{{ msg }}</span>
+        <button class="btn btn-lg btn-primary btn-block"  type="submit">Entrar</button>
+      </form>
+
+</div> <!-- /container -->
